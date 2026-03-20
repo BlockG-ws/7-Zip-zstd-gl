@@ -52,6 +52,49 @@ jobs:
         path: ${{ github.workspace }}/CPP/build-clang/*
         name: linux-clang-${{ matrix.arch }}
 
+  linux-gui:
+
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        arch: [ x64, arm64 ]
+        include:
+          - arch: x64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+    - uses: actions/checkout@v6
+    - name: Install Qt and build dependencies
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y --no-install-recommends \
+          cmake ninja-build \
+          qtbase5-dev qt5-qmake \
+          libqt5widgets5
+    - name: Build Qt GUI
+      run: |
+        cmake -S . -B build-gui -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/build-gui-install"
+        cmake --build build-gui --parallel
+        cmake --install build-gui
+    - name: Verify binary exists
+      run: |
+        test -f "${{ github.workspace }}/build-gui/CPP/7zip/UI/QtGUI/7zz-gui" && \
+          echo "7zz-gui built successfully" || \
+          (echo "ERROR: 7zz-gui binary not found" && exit 1)
+    - name: Upload GUI Build Artifact
+      uses: actions/upload-artifact@v6
+      with:
+        path: ${{ github.workspace }}/build-gui/CPP/7zip/UI/QtGUI/7zz-gui
+        name: linux-gui-${{ matrix.arch }}
+
   windows:
 
     strategy:

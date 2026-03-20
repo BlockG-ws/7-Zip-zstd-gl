@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=7-Zip ZS
+GenericName=Archive Manager
+Comment=Archive Manager with Zstandard support
+Exec=7zz-gui %f
+Icon=utilities-file-archiver
+Categories=Archiver;Utility;FileManager;
+MimeType=application/x-7z-compressed;application/zip;application/x-tar;application/gzip;application/x-bzip2;application/x-xz;application/zstd;application/x-lz4;application/x-rar;application/x-compressed-tar;
+Terminal=false
+StartupNotify=true
+StartupWMClass=7zz-gui
